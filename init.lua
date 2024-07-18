@@ -46,6 +46,8 @@ vim.opt.listchars = {
     nbsp = "␣",
 }
 
+vim.g.c_syntax_for_h = 1
+
 local function update_lead()
     local lcs = vim.opt_local.listchars:get()
     local tab = vim.fn.str2list(lcs.tab)
@@ -65,8 +67,8 @@ vim.g.mapleader = " "
 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
 
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 vim.keymap.set({ "n", "v" }, "<leader>p", '"+p')
@@ -108,6 +110,8 @@ require("lazy").setup({
                 formatters_by_ft = {
                     javascript = { "prettierd" },
                     javascriptreact = { "prettierd" },
+                    typescript = { "prettierd" },
+                    json = { "prettierd" },
                 },
                 formatters = {
                     injected = { options = { ignore_errors = true } },
@@ -127,7 +131,8 @@ require("lazy").setup({
         "mfussenegger/nvim-lint",
         config = function()
             require('lint').linters_by_ft = {
-                javascriptreact = { 'eslint_d' }
+                javascriptreact = { 'eslint_d' },
+                typescript = { 'eslint_d' }
             }
 
             vim.api.nvim_create_autocmd({ "BufWritePost" }, {
@@ -148,13 +153,13 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local lspconfig = require("lspconfig")
-            local servers = { "lua_ls", "rust_analyzer", "pylsp", "tailwindcss", "tsserver", "emmet_ls" }
+            local servers = { "lua_ls", "rust_analyzer", "pylsp", "tsserver", "emmet_ls", "clangd", "lexical" }
 
             for _, lsp in ipairs(servers) do
                 lspconfig[lsp].setup {
                     on_attach = function(client, bufnr)
                         if client.server_capabilities.inlayHintProvider then
-                            vim.lsp.inlay_hint.enable(bufnr, true)
+                            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
                         end
                     end,
                     capabilities = capabilities,
@@ -175,6 +180,18 @@ require("lazy").setup({
                     }
                 }
             end
+            lspconfig['tailwindcss'].setup {
+                on_attach = function(client, bufnr)
+                    if client.server_capabilities.inlayHintProvider then
+                        vim.lsp.inlay_hint.enable(bufnr, true)
+                    end
+                end,
+                capabilities = capabilities,
+                filetypes = { "aspnetcorerazor", "astro", "astro-markdown", "blade", "clojure", "django-html", "htmldjango", "edge", "eelixir", "elixir", "ejs", "erb", "eruby", "gohtml", "gohtmltmpl", "haml", "handlebars", "hbs", "html", "html-eex", "heex", "jade", "leaf", "liquid", "markdown", "mdx", "mustache", "njk", "nunjucks", "php", "razor", "slim", "twig", "css", "less", "postcss", "sass", "scss", "stylus", "sugarss", "javascript", "javascriptreact", "pug", "reason", "rescript", "typescript", "typescriptreact", "vue", "svelte" },
+                init_options = {
+                    userLanguages = { pug = "html" }
+                }
+            }
 
             vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
             vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -293,7 +310,7 @@ require("lazy").setup({
                     ["<CR>"] = cmp.mapping({
                         i = function(fallback)
                             if cmp.visible() and cmp.get_active_entry() then
-                                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false })
+                                cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = true })
                             else
                                 fallback()
                             end
@@ -429,10 +446,6 @@ require("lazy").setup({
         'windwp/nvim-autopairs',
         event = "InsertEnter",
         opts = { check_ts = true, }
-    },
-    {
-        'numToStr/Comment.nvim',
-        opts = {}
     },
     {
         'HiPhish/rainbow-delimiters.nvim',
