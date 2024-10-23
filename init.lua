@@ -81,13 +81,12 @@ vim.opt.guifont = "IosevkaTerm NF:h13.75"
 
 require("lazy").setup({
     {
-        "sainnhe/gruvbox-material",
+        "gbprod/nord.nvim",
         lazy = false,
         priority = 1000,
         config = function()
-            vim.cmd [[let g:gruvbox_material_background = 'hard']]
-            vim.cmd [[let g:gruvbox_material_better_performance = 1]]
-            vim.cmd.colorscheme("gruvbox-material")
+            require('nord').setup({})
+            vim.cmd.colorscheme("nord")
         end,
     },
     {
@@ -111,7 +110,9 @@ require("lazy").setup({
                     javascript = { "prettierd" },
                     javascriptreact = { "prettierd" },
                     typescript = { "prettierd" },
+                    typescriptreact = { "prettierd" },
                     json = { "prettierd" },
+                    css = { "prettierd" },
                 },
                 formatters = {
                     injected = { options = { ignore_errors = true } },
@@ -132,7 +133,8 @@ require("lazy").setup({
         config = function()
             require('lint').linters_by_ft = {
                 javascriptreact = { 'eslint_d' },
-                typescript = { 'eslint_d' }
+                typescript = { 'eslint_d' },
+                typescriptreact = { 'eslint_d' }
             }
 
             vim.api.nvim_create_autocmd({ "BufWritePost" }, {
@@ -153,19 +155,11 @@ require("lazy").setup({
             require("mason-lspconfig").setup()
             local capabilities = require("cmp_nvim_lsp").default_capabilities()
             local lspconfig = require("lspconfig")
-            local servers = { "lua_ls", "rust_analyzer", "pylsp", "tsserver", "emmet_ls", "clangd", "lexical" }
+            local servers = { "lua_ls", "rust_analyzer", "pylsp", "ts_ls", "emmet_ls", "clangd", "lexical", "cssls" }
 
             for _, lsp in ipairs(servers) do
                 lspconfig[lsp].setup {
-                    on_attach = function(client, bufnr)
-                        if client.server_capabilities.inlayHintProvider then
-                            vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-                        end
-                    end,
                     capabilities = capabilities,
-                    inlay_hints = {
-                        enabled = true
-                    },
                     settings = {
                         Lua = {
                             diagnostics = {
@@ -230,7 +224,6 @@ require("lazy").setup({
             "hrsh7th/cmp-buffer",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-cmdline",
-            "saadparwaiz1/cmp_luasnip",
         },
         config = function()
             local kind_icons = {
@@ -261,7 +254,6 @@ require("lazy").setup({
                 TypeParameter = "󰅲",
             }
             local cmp = require("cmp")
-            local luasnip = require("luasnip")
 
             cmp.setup.cmdline('/', {
                 mapping = cmp.mapping.preset.cmdline(),
@@ -278,14 +270,8 @@ require("lazy").setup({
             })
 
             cmp.setup {
-                snippet = {
-                    expand = function(args)
-                        require('luasnip').lsp_expand(args.body)
-                    end
-                },
                 sources = cmp.config.sources {
                     { name = "nvim_lsp" },
-                    { name = "luasnip" },
                     { name = "buffer" },
                     { name = "path" },
                 },
@@ -297,7 +283,6 @@ require("lazy").setup({
                         vim_item.menu = ({
                             buffer = "[Buffer]",
                             nvim_lsp = "[LSP]",
-                            luasnip = "[LuaSnip]",
                             nvim_lua = "[Lua]",
                             latex_symbols = "[LaTeX]",
                         })[entry.source.name]
@@ -325,8 +310,6 @@ require("lazy").setup({
                             else
                                 cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
                             end
-                        elseif luasnip.expand_or_jumpable() then
-                            luasnip.expand_or_jump()
                         else
                             fallback()
                         end
@@ -334,8 +317,6 @@ require("lazy").setup({
                     ["<S-Tab>"] = cmp.mapping(function(fallback)
                         if cmp.visible() then
                             cmp.select_prev_item({ behavior = cmp.SelectBehavior.Select })
-                        elseif luasnip.jumpable(-1) then
-                            luasnip.jump(-1)
                         else
                             fallback()
                         end
@@ -346,17 +327,6 @@ require("lazy").setup({
                 },
             }
         end,
-    },
-    {
-        "L3MON4D3/LuaSnip",
-        version = "v2.*",
-        build = "make install_jsregexp",
-        dependencies = {
-            "rafamadriz/friendly-snippets",
-            config = function()
-                require("luasnip.loaders.from_vscode").lazy_load()
-            end,
-        },
     },
     {
         "nvim-treesitter/nvim-treesitter",
@@ -383,7 +353,7 @@ require("lazy").setup({
     {
         "nvim-lualine/lualine.nvim",
         event = "VeryLazy",
-        opts = { options = { globalstatus = true } },
+        opts = { options = { globalstatus = true, theme = 'nord' } },
     },
     {
         'stevearc/oil.nvim',
@@ -450,4 +420,16 @@ require("lazy").setup({
     {
         'HiPhish/rainbow-delimiters.nvim',
     },
+    {
+        'kylechui/nvim-surround',
+        opts = {},
+    },
+    {
+        'lewis6991/gitsigns.nvim',
+        opts = {},
+    },
+    {
+        'nmac427/guess-indent.nvim',
+        opts = {},
+    }
 })
