@@ -7,7 +7,9 @@ return {
     },
     config = function()
         require("mason").setup()
-        require("mason-lspconfig").setup()
+        require("mason-lspconfig").setup {
+            automatic_enable = false
+        }
         local capabilities = require("blink.cmp").get_lsp_capabilities()
         local lspconfig = require("lspconfig")
         local servers = { "lua_ls", "rust_analyzer", "pylsp", "ts_ls", "emmet_ls", "clangd", "lexical", "cssls",
