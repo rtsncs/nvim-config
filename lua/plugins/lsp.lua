@@ -10,28 +10,27 @@ return {
         require("mason-lspconfig").setup {
             automatic_enable = false
         }
-        local capabilities = require("blink.cmp").get_lsp_capabilities()
-        local lspconfig = require("lspconfig")
-        local servers = { "lua_ls", "rust_analyzer", "pylsp", "ts_ls", "emmet_ls", "clangd", "lexical", "cssls",
-            "jdtls", "zls", "gopls", "csharp_ls" }
 
-        for _, lsp in ipairs(servers) do
-            lspconfig[lsp].setup {
-                capabilities = capabilities,
-                settings = {
-                    Lua = {
-                        diagnostics = {
-                            globals = { "vim" }
-                        }
-                    },
-                    ["rust_analyzer"] = {
-                        check = {
-                            command = "clippy"
-                        }
-                    },
+        vim.lsp.config("lua_ls", {
+            settings = {
+                Lua = {
+                    diagnostics = {
+                        globals = { "vim" }
+                    }
                 }
             }
-        end
+        })
+        vim.lsp.config("rust_analyzer", {
+            settings = {
+                ['rust-analyzer'] = {
+                    check = {
+                        command = "clippy"
+                    }
+                }
+            }
+        })
+        vim.lsp.enable({ "lua_ls", "rust_analyzer", "pyright", "ts_ls", "emmet_ls", "eslint", "clangd", "lexical",
+            "cssls", "jdtls", "zls", "gopls", "csharp_ls", "tailwindcss", "kotlin_lsp", "vacuum" })
 
         vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)
@@ -50,7 +49,7 @@ return {
 
                 vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
                 vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-                vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
+                -- vim.keymap.set('n', '<leader>D', vim.lsp.buf.type_definition, opts)
                 vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
                 vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
                 vim.keymap.set("n", "<leader>a", vim.lsp.buf.code_action, opts)

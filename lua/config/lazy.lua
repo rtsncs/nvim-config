@@ -76,14 +76,32 @@ vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set({ "n", "v" }, "<leader>y", '"+y')
 vim.keymap.set({ "n", "v" }, "<leader>p", '"+p')
 
-vim.keymap.set("n", "ga", "<cmd>b#<CR>")
-
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+
+local indentGroup = vim.api.nvim_create_augroup("setIndent", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+    group = indentGroup,
+    pattern = { "css", "html", "javascript", "typescript", "javascriptreact", "typescriptreact", "json", "jsonc", "xml", "yaml" },
+    callback = function()
+        vim.opt_local.shiftwidth = 2
+        vim.opt_local.tabstop = 2
+        update_lead()
+    end,
+})
+
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = { "*" },
+    callback = function()
+        vim.opt_local.spell = true
+        vim.opt_local.spelloptions = "camel"
+    end
+})
 
 require("lazy").setup({
     spec = {
         { import = "plugins" },
     },
     install = { colorscheme = { "default" } },
-    checker = { enabled = true },
+    checker = { enabled = false },
 })
