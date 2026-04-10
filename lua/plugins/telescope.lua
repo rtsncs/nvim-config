@@ -9,7 +9,17 @@ return {
             build = "make",
         },
     },
-    config = function() require("telescope").load_extension("fzf") end,
+    config = function()
+        require("telescope").setup({
+            defaults = {
+                layout_strategy = "vertical",
+                layout_config = {
+                    prompt_position = "top",
+                },
+            }
+        })
+        require("telescope").load_extension("fzf")
+    end,
     keys = {
         {
             "<leader>,",
@@ -36,7 +46,7 @@ return {
             function()
                 require("telescope.builtin").lsp_document_symbols()
             end,
-            desc = "Goto Symbol",
+
         },
         {
             "<leader>sS",

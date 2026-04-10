@@ -3,12 +3,8 @@ return {
     version = false,
     build = ":TSUpdate",
     dependencies = { "windwp/nvim-ts-autotag" },
-    init = function(plugin)
-        require("lazy.core.loader").add_to_rtp(plugin)
-        require("nvim-treesitter.query_predicates")
-    end,
     config = function()
-        require("nvim-treesitter.configs").setup({
+        require("nvim-treesitter").setup({
             highlight = { enable = true },
             autotag = { enable = true },
             -- indent = { enable = true },

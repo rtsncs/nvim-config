@@ -29,8 +29,9 @@ return {
                 }
             }
         })
-        vim.lsp.enable({ "lua_ls", "rust_analyzer", "pyright", "ts_ls", "emmet_ls", "eslint", "clangd", "lexical",
-            "cssls", "jdtls", "zls", "gopls", "csharp_ls", "tailwindcss", "kotlin_lsp", "vacuum" })
+        vim.lsp.enable({ "lua_ls", "rust_analyzer", "pyright", "tsgo", "emmet_language_server", "eslint", "clangd",
+            "lexical", "cssls", "jdtls", "zls", "gopls", "csharp_ls", "tailwindcss", "kotlin_lsp", "vacuum", "groovyls",
+            "julials" })
 
         vim.keymap.set('n', '<space>e', vim.diagnostic.open_float)
         vim.keymap.set('n', '[d', vim.diagnostic.goto_prev)

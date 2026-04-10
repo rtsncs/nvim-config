@@ -50,25 +50,14 @@ vim.opt.listchars = {
 }
 
 vim.g.c_syntax_for_h = 1
+vim.opt.showmode = false
 
-local function update_lead()
-    local lcs = vim.opt_local.listchars:get()
-    local tab = vim.fn.str2list(lcs.tab)
-    -- local tab = "│ "
-    local space = vim.fn.str2list(lcs.multispace or lcs.space)
-    local lead = { tab[1] }
-    for i = 1, vim.bo.tabstop - 1 do
-        lead[#lead + 1] = space[i % #space + 1]
-    end
-    vim.opt_local.listchars:append({ leadmultispace = vim.fn.list2str(lead) })
-end
-vim.api.nvim_create_autocmd("OptionSet", { pattern = { "listchars", "tabstop", "filetype" }, callback = update_lead })
-vim.api.nvim_create_autocmd("VimEnter", { callback = update_lead, once = true })
+vim.cmd("packadd nvim.undotree")
 
 vim.keymap.set("", "<Space>", "<Nop>", { noremap = true, silent = true })
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+vim.keymap.set("n", "<leader>u", require("undotree").open)
 
 vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv")
@@ -85,18 +74,10 @@ vim.api.nvim_create_autocmd("FileType", {
     callback = function()
         vim.opt_local.shiftwidth = 2
         vim.opt_local.tabstop = 2
-        update_lead()
     end,
 })
 
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = { "*" },
-    callback = function()
-        vim.opt_local.spell = true
-        vim.opt_local.spelloptions = "camel"
-    end
-})
+require('vim._core.ui2').enable({})
 
 require("lazy").setup({
     spec = {
