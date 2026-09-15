@@ -70,7 +70,7 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 local indentGroup = vim.api.nvim_create_augroup("setIndent", { clear = true })
 vim.api.nvim_create_autocmd("FileType", {
     group = indentGroup,
-    pattern = { "css", "html", "javascript", "typescript", "javascriptreact", "typescriptreact", "json", "jsonc", "xml", "yaml" },
+    pattern = { "css", "html", "javascript", "typescript", "javascriptreact", "typescriptreact", "json", "jsonc", "xml", "yaml", "astro" },
     callback = function()
         vim.opt_local.shiftwidth = 2
         vim.opt_local.tabstop = 2

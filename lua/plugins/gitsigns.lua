@@ -47,6 +47,9 @@ return {
             map('n', '<leader>hb', function()
                 gitsigns.blame_line({ full = true })
             end)
+            map('n', '<leader>hB', function()
+                gitsigns.blame({ full = true })
+            end)
 
             map('n', '<leader>hd', gitsigns.diffthis)
 

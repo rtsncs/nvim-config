@@ -24,6 +24,7 @@ return {
                 css = { "prettierd" },
                 html = { "prettierd" },
                 xml = { "prettierd" },
+                astro = { "prettierd" },
             },
             formatters = {
                 injected = { options = { ignore_errors = true } },
